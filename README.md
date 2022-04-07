@@ -19,3 +19,7 @@ completes.
 
 - https://www.baeldung.com/spring-5-webclient
 - https://howtodoinjava.com/spring-webflux/webclient-get-post-example/#:~:text=%20Sending%20Requests%20%201%20Create%20WebClient.UriSpec%20reference,directly%20performs%20the%20HTTP%20request%20and...%20More%20
+
+# Scheme of work with Players API
+
+https://lucid.app/lucidchart/4dcd4e16-9b03-4a53-b15f-0a44d5144925/edit?invitationId=inv_75b227c3-d7de-4f4c-950a-b5cebdb3f309
