@@ -23,8 +23,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public List<PlayerDto> findPlayersByClub(String clubName) {
-        webClientUtils.initWebClient(playersBaseUrl);
         return webClientUtils.getListByParameters(
+                playersBaseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, clubName)),
                 PlayerDto.class);

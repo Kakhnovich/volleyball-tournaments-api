@@ -60,16 +60,19 @@ public class TournamentControllerTests {
         List<TournamentDto> expectedTournaments = initTournamentList();
 
         when(webClientUtils.getListByParameters(
+                baseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
                 PlayerDto.class))
                     .thenReturn(List.of(createNimirDto()));
         when(webClientUtils.getListByParameters(
+                baseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
                 PlayerDto.class))
                     .thenReturn(List.of(createMikhaylovDto()));
         when(webClientUtils.getListByParameters(
+                baseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, "Volley Callipo")),
                 PlayerDto.class))
@@ -95,11 +98,13 @@ public class TournamentControllerTests {
         TournamentDto expectedTournament = initTournamentDto();
 
         when(webClientUtils.getListByParameters(
+                baseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
                 PlayerDto.class))
                     .thenReturn(List.of(createNimirDto()));
         when(webClientUtils.getListByParameters(
+                baseUrl,
                 playersPath,
                 List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
                 PlayerDto.class))
@@ -242,11 +247,6 @@ public class TournamentControllerTests {
                                 .build()))
                 .build());
         return tournamentDtos;
-    }
-
-    @PostConstruct
-    private void init() {
-        webClientUtils.initWebClient(baseUrl);
     }
 
     private PlayerDto createNimirDto() {

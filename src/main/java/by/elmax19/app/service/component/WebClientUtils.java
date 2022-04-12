@@ -13,15 +13,11 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-@NoArgsConstructor
 public class WebClientUtils {
     private WebClient webClient;
 
-    public WebClientUtils(WebClient webClient) {
-        this.webClient = webClient;
-    }
-
-    public <T> List<T> getListByParameters(String path, List<UriParameterDto> params, Class<T> entityClass) {
+    public <T> List<T> getListByParameters(String baseUrl, String path, List<UriParameterDto> params, Class<T> entityClass) {
+        initWebClient(baseUrl);
         Function<UriBuilder, URI> uriFunction = uriBuilder -> {
             UriBuilder uri = uriBuilder
                     .path(path);
@@ -37,7 +33,7 @@ public class WebClientUtils {
                 .block();
     }
 
-    public void initWebClient(String baseUrl) {
+    private void initWebClient(String baseUrl) {
         webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

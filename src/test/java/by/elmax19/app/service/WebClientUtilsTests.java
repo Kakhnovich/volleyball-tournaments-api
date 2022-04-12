@@ -8,7 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
@@ -33,25 +37,35 @@ public class WebClientUtilsTests {
     private WebClient.RequestHeadersUriSpec requestHeadersUriMock;
     @Mock
     private WebClient.ResponseSpec responseMock;
+    @Mock
+    private WebClient.Builder webClientBuilder;
     @InjectMocks
     private WebClientUtils webClientUtils;
 
     @Test
     void checkResultOfRequest() {
         PlayerDto expectedPlayer = createPlayerDto();
-
         when(webClientMock.get()).thenReturn(requestHeadersUriMock);
         when(requestHeadersUriMock.uri(any(Function.class))).thenReturn(requestHeadersMock);
         when(requestHeadersMock.retrieve()).thenReturn(responseMock);
         when(responseMock.bodyToFlux(PlayerDto.class)).thenReturn(Flux.just(expectedPlayer));
 
-        List<PlayerDto> actualList = webClientUtils.getListByParameters(
-                PLAYERS_PATH,
-                List.of(new UriParameterDto(CLUB_PARAMETER_NAME, "Azimut Modena")),
-                PlayerDto.class);
+        try (MockedStatic<WebClient> utilities = Mockito.mockStatic(WebClient.class)) {
+            utilities.when(WebClient::builder).thenReturn(webClientBuilder);
+            when(webClientBuilder.baseUrl(BASE_URL)).thenReturn(webClientBuilder);
+            when(webClientBuilder.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                    .thenReturn(webClientBuilder);
+            when(webClientBuilder.build()).thenReturn(webClientMock);
 
-        assertEquals(1, actualList.size());
-        assertEquals(expectedPlayer, actualList.get(0));
+            List<PlayerDto> actualList = webClientUtils.getListByParameters(
+                    BASE_URL,
+                    PLAYERS_PATH,
+                    List.of(new UriParameterDto(CLUB_PARAMETER_NAME, "Azimut Modena")),
+                    PlayerDto.class);
+
+            assertEquals(1, actualList.size());
+            assertEquals(expectedPlayer, actualList.get(0));
+        }
 
         verify(webClientMock).get();
         verify(requestHeadersUriMock).uri(any(Function.class));
