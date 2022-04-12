@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class WebClientUtilsTests {
+    private final String BASE_URL = "http://localhost:8080";
     private final String PLAYERS_PATH = "/players";
     private final String CLUB_PARAMETER_NAME = "club";
     @Mock
@@ -44,7 +47,9 @@ public class WebClientUtilsTests {
         when(responseMock.bodyToFlux(PlayerDto.class)).thenReturn(Flux.just(expectedPlayer));
 
         List<PlayerDto> actualList = webClientUtils.getListByParameters(
-                PLAYERS_PATH, List.of(new UriParameterDto(CLUB_PARAMETER_NAME, "Azimut Modena")), PlayerDto.class);
+                PLAYERS_PATH,
+                List.of(new UriParameterDto(CLUB_PARAMETER_NAME, "Azimut Modena")),
+                PlayerDto.class);
 
         assertEquals(1, actualList.size());
         assertEquals(expectedPlayer, actualList.get(0));

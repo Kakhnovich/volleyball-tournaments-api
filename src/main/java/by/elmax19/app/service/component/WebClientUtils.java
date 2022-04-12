@@ -17,13 +17,6 @@ import java.util.function.Function;
 public class WebClientUtils {
     private WebClient webClient;
 
-    public WebClientUtils(String baseUrl) {
-        webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
     public WebClientUtils(WebClient webClient) {
         this.webClient = webClient;
     }
@@ -42,5 +35,12 @@ public class WebClientUtils {
                 .bodyToFlux(entityClass)
                 .collectList()
                 .block();
+    }
+
+    public void initWebClient(String baseUrl) {
+        webClient = WebClient.builder()
+                .baseUrl(baseUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 }

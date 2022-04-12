@@ -21,9 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -37,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 public class TournamentControllerTests {
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Autowired
@@ -46,6 +48,8 @@ public class TournamentControllerTests {
     private MockMvc mockMvc;
     @MockBean
     private WebClientUtils webClientUtils;
+    @Value("${volleyball-players.api.base-url}")
+    private String baseUrl;
     @Value("${volleyball-players.api.players.path}")
     private String playersPath;
     @Value("${volleyball-players.api.players.club-parameter-name}")
@@ -57,14 +61,20 @@ public class TournamentControllerTests {
         List<TournamentDto> expectedTournaments = initTournamentList();
 
         when(webClientUtils.getListByParameters(
-                playersPath, List.of(new UriParameterDto(clubParameterName, "Azimut Modena")), PlayerDto.class))
-                .thenReturn(List.of(createNimirDto()));
+                playersPath,
+                List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
+                PlayerDto.class))
+                    .thenReturn(List.of(createNimirDto()));
         when(webClientUtils.getListByParameters(
-                playersPath, List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")), PlayerDto.class))
-                .thenReturn(List.of(createMikhaylovDto()));
+                playersPath,
+                List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
+                PlayerDto.class))
+                    .thenReturn(List.of(createMikhaylovDto()));
         when(webClientUtils.getListByParameters(
-                playersPath, List.of(new UriParameterDto(clubParameterName, "Volley Callipo")), PlayerDto.class))
-                .thenReturn(List.of(createNishidaDto()));
+                playersPath,
+                List.of(new UriParameterDto(clubParameterName, "Volley Callipo")),
+                PlayerDto.class))
+                    .thenReturn(List.of(createNishidaDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournaments"))
                 .andExpect(status().isOk())
@@ -86,11 +96,15 @@ public class TournamentControllerTests {
         TournamentDto expectedTournament = initTournamentDto();
 
         when(webClientUtils.getListByParameters(
-                playersPath, List.of(new UriParameterDto(clubParameterName, "Azimut Modena")), PlayerDto.class))
-                .thenReturn(List.of(createNimirDto()));
+                playersPath,
+                List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
+                PlayerDto.class))
+                    .thenReturn(List.of(createNimirDto()));
         when(webClientUtils.getListByParameters(
-                playersPath, List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")), PlayerDto.class))
-                .thenReturn(List.of(createMikhaylovDto()));
+                playersPath,
+                List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
+                PlayerDto.class))
+                    .thenReturn(List.of(createMikhaylovDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournament/{tournamentId}", expectedTournament.getId()))
                 .andExpect(status().isOk())
@@ -229,6 +243,11 @@ public class TournamentControllerTests {
                                 .build()))
                 .build());
         return tournamentDtos;
+    }
+
+    @PostConstruct
+    private void init() {
+        webClientUtils.initWebClient(baseUrl);
     }
 
     private PlayerDto createNimirDto() {
