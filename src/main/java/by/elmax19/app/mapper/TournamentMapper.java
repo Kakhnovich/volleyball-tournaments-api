@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = ParticipantMapper.class, imports = ZoneOffset.class)
 public interface TournamentMapper {
     @Mapping(target = "id", expression = "java(tournament.getId().toString())")
-    @Mapping(target = "date", expression = "java(tournament.getDate().atStartOfDay().toInstant(ZoneOffset.UTC))")
     @Mapping(target = "participants", source = "participants")
     TournamentDto convertToDto(Tournament tournament, List<ParticipantDto> participants);
 }

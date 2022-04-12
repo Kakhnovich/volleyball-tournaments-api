@@ -6,10 +6,9 @@ import by.elmax19.app.service.component.WebClientUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
@@ -34,11 +33,11 @@ public class WebClientUtilsTests {
     private WebClient.RequestHeadersUriSpec requestHeadersUriMock;
     @Mock
     private WebClient.ResponseSpec responseMock;
+    @InjectMocks
     private WebClientUtils webClientUtils;
 
     @Test
     void checkResultOfRequest() {
-        webClientUtils = new WebClientUtils(webClientMock);
         PlayerDto expectedPlayer = createPlayerDto();
 
         when(webClientMock.get()).thenReturn(requestHeadersUriMock);

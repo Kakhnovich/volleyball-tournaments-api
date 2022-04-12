@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 @EqualsAndHashCode
@@ -18,7 +18,7 @@ public class Tournament {
     @MongoId
     private ObjectId id;
     private String tournamentName;
-    private LocalDate date;
+    private Instant date;
     private String town;
     private List<Participant> participants;
 }

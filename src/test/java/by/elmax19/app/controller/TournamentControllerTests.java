@@ -147,7 +147,7 @@ public class TournamentControllerTests {
         Tournament tournament = Tournament.builder()
                 .id(new ObjectId())
                 .tournamentName("2019 FIVB Volleyball Men's World Cup")
-                .date(LocalDate.of(2019, Month.SEPTEMBER, 30))
+                .date(LocalDate.of(2019, Month.SEPTEMBER, 30).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         Participant.builder()
@@ -186,7 +186,7 @@ public class TournamentControllerTests {
         tournaments.add(Tournament.builder()
                 .id(new ObjectId())
                 .tournamentName("2019 FIVB Volleyball Men's World Cup")
-                .date(LocalDate.of(2019, Month.SEPTEMBER, 30))
+                .date(LocalDate.of(2019, Month.SEPTEMBER, 30).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         Participant.builder()
@@ -201,7 +201,7 @@ public class TournamentControllerTests {
         tournaments.add(Tournament.builder()
                 .id(new ObjectId())
                 .tournamentName("2017 FIVB Volleyball Men's World Grand Champions Cup")
-                .date(LocalDate.of(2017, Month.OCTOBER, 11))
+                .date(LocalDate.of(2017, Month.OCTOBER, 11).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         Participant.builder()

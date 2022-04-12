@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,20 +39,15 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     private List<TournamentDto> convertTournamentListToDto(List<Tournament> tournaments) {
-        List<TournamentDto> tournamentDtos = new ArrayList<>();
-        for (Tournament tournament : tournaments) {
-            TournamentDto tournamentDto = convertTournamentToDto(tournament);
-            tournamentDtos.add(tournamentDto);
-        }
-        return tournamentDtos;
+        return tournaments.stream()
+                .map(this::convertTournamentToDto)
+                .toList();
     }
 
     private TournamentDto convertTournamentToDto(Tournament tournament) {
-        List<ParticipantDto> participantDtos = new ArrayList<>();
-        for (Participant participant : tournament.getParticipants()) {
-            ParticipantDto participantDto = convertParticipantToDto(participant);
-            participantDtos.add(participantDto);
-        }
+        List<ParticipantDto> participantDtos = tournament.getParticipants().stream()
+                .map(this::convertParticipantToDto)
+                .toList();
         return tournamentMapper.convertToDto(tournament, participantDtos);
     }
 
