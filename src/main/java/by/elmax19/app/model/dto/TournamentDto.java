@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 @EqualsAndHashCode
@@ -17,7 +17,7 @@ import java.util.List;
 public class TournamentDto {
     private String id;
     private String tournamentName;
-    private LocalDate date;
+    private Instant date;
     private String town;
     private List<ParticipantDto> participants;
 }

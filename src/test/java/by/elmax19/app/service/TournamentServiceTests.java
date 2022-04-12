@@ -1,6 +1,7 @@
 package by.elmax19.app.service;
 
 import by.elmax19.app.exception.TournamentNotFoundException;
+import by.elmax19.app.mapper.ParticipantMapper;
 import by.elmax19.app.mapper.TournamentMapper;
 import by.elmax19.app.model.Participant;
 import by.elmax19.app.model.Tournament;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +33,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class TournamentServiceTests {
     @Mock
+    private PlayerService playerService;
+    @Mock
+    private ParticipantMapper participantMapper;
+    @Mock
     private TournamentMapper tournamentMapper;
     @Mock
     private TournamentRepository tournamentRepository;
@@ -42,8 +48,15 @@ public class TournamentServiceTests {
     void checkFindById() {
         Tournament tournament = createTournament();
         TournamentDto tournamentDto = createTournamentDto(tournament.getId().toString());
+
         when(tournamentRepository.findById(tournament.getId())).thenReturn(Optional.of(tournament));
-        when(tournamentMapper.convertToDto(tournament)).thenReturn(tournamentDto);
+        when(playerService.findPlayersByClub(tournament.getParticipants().get(0).getClubName()))
+                .thenReturn(tournamentDto.getParticipants().get(0).getPlayers());
+        when(participantMapper.participantToDto(
+                tournament.getParticipants().get(0),
+                tournamentDto.getParticipants().get(0).getPlayers()))
+                    .thenReturn(tournamentDto.getParticipants().get(0));
+        when(tournamentMapper.convertToDto(tournament, tournamentDto.getParticipants())).thenReturn(tournamentDto);
 
         TournamentDto actual = tournamentService.findById(tournament.getId().toString());
 
@@ -64,8 +77,33 @@ public class TournamentServiceTests {
     void checkFindAll() {
         List<Tournament> tournaments = createTournamentList();
         List<TournamentDto> tournamentDtos = createTournamentDtoList(tournaments);
+
         when(tournamentRepository.findAll()).thenReturn(tournaments);
-        when(tournamentMapper.convertListToDto(tournaments)).thenReturn(tournamentDtos);
+
+        when(playerService.findPlayersByClub(tournaments.get(0).getParticipants().get(0).getClubName()))
+                .thenReturn(tournamentDtos.get(0).getParticipants().get(0).getPlayers());
+        when(playerService.findPlayersByClub(tournaments.get(0).getParticipants().get(1).getClubName()))
+                .thenReturn(tournamentDtos.get(0).getParticipants().get(1).getPlayers());
+        when(playerService.findPlayersByClub(tournaments.get(1).getParticipants().get(0).getClubName()))
+                .thenReturn(tournamentDtos.get(1).getParticipants().get(0).getPlayers());
+
+        when(participantMapper.participantToDto(
+                tournaments.get(0).getParticipants().get(0),
+                tournamentDtos.get(0).getParticipants().get(0).getPlayers()))
+                    .thenReturn(tournamentDtos.get(0).getParticipants().get(0));
+        when(participantMapper.participantToDto(
+                tournaments.get(0).getParticipants().get(1),
+                tournamentDtos.get(0).getParticipants().get(1).getPlayers()))
+                    .thenReturn(tournamentDtos.get(0).getParticipants().get(1));
+        when(participantMapper.participantToDto(
+                tournaments.get(1).getParticipants().get(0),
+                tournamentDtos.get(1).getParticipants().get(0).getPlayers()))
+                    .thenReturn(tournamentDtos.get(1).getParticipants().get(0));
+
+        when(tournamentMapper.convertToDto(tournaments.get(0), tournamentDtos.get(0).getParticipants()))
+                .thenReturn(tournamentDtos.get(0));
+        when(tournamentMapper.convertToDto(tournaments.get(1), tournamentDtos.get(1).getParticipants()))
+                .thenReturn(tournamentDtos.get(1));
 
         List<TournamentDto> actual = tournamentService.findAll();
 
@@ -91,7 +129,7 @@ public class TournamentServiceTests {
         return TournamentDto.builder()
                 .id(id)
                 .tournamentName("2017 FIVB Volleyball Men's World Grand Champions Cup")
-                .date(LocalDate.of(2017, Month.OCTOBER, 11))
+                .date(LocalDate.of(2017, Month.OCTOBER, 11).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()
@@ -138,7 +176,7 @@ public class TournamentServiceTests {
         tournamentDtos.add(TournamentDto.builder()
                 .id(tournaments.get(0).getId().toString())
                 .tournamentName("2019 FIVB Volleyball Men's World Cup")
-                .date(LocalDate.of(2019, Month.SEPTEMBER, 30))
+                .date(LocalDate.of(2019, Month.SEPTEMBER, 30).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()
@@ -155,7 +193,7 @@ public class TournamentServiceTests {
         tournamentDtos.add(TournamentDto.builder()
                 .id(tournaments.get(1).getId().toString())
                 .tournamentName("2017 FIVB Volleyball Men's World Grand Champions Cup")
-                .date(LocalDate.of(2017, Month.OCTOBER, 11))
+                .date(LocalDate.of(2017, Month.OCTOBER, 11).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()

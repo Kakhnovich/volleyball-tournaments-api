@@ -1,7 +1,9 @@
 package by.elmax19.app.service.component;
 
 import by.elmax19.app.model.dto.UriParameterDto;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
@@ -11,11 +13,22 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class WebClientUtils {
-    private final WebClient webClient;
+    private WebClient webClient;
 
-    public <C> List<C> getListByParameters(String path, List<UriParameterDto> params, Class<C> entityClass) {
+    public WebClientUtils(String baseUrl) {
+        webClient = WebClient.builder()
+                .baseUrl(baseUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+
+    public WebClientUtils(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    public <T> List<T> getListByParameters(String path, List<UriParameterDto> params, Class<T> entityClass) {
         Function<UriBuilder, URI> uriFunction = uriBuilder -> {
             UriBuilder uri = uriBuilder
                     .path(path);

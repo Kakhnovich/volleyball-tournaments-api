@@ -1,6 +1,5 @@
 package by.elmax19.app.controller;
 
-import by.elmax19.app.mapper.TournamentMapper;
 import by.elmax19.app.model.Participant;
 import by.elmax19.app.model.Tournament;
 import by.elmax19.app.model.dto.ParticipantDto;
@@ -27,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 public class TournamentControllerTests {
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Autowired
     private TournamentRepository tournamentRepository;
-    @Autowired
-    private TournamentMapper tournamentMapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -70,7 +69,7 @@ public class TournamentControllerTests {
         MvcResult mvcResult = mockMvc.perform(get("/tournaments"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<TournamentDto> actualTournaments = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(
+        List<TournamentDto> actualTournaments = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
                 });
 
@@ -96,7 +95,7 @@ public class TournamentControllerTests {
         MvcResult mvcResult = mockMvc.perform(get("/tournament/{tournamentId}", expectedTournament.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
-        TournamentDto actualTournament = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(
+        TournamentDto actualTournament = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
                 });
 
@@ -152,7 +151,7 @@ public class TournamentControllerTests {
         return TournamentDto.builder()
                 .id(tournament.getId().toString())
                 .tournamentName("2019 FIVB Volleyball Men's World Cup")
-                .date(LocalDate.of(2019, Month.SEPTEMBER, 30))
+                .date(LocalDate.of(2019, Month.SEPTEMBER, 30).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()
@@ -203,7 +202,7 @@ public class TournamentControllerTests {
         tournamentDtos.add(TournamentDto.builder()
                 .id(tournaments.get(0).getId().toString())
                 .tournamentName("2019 FIVB Volleyball Men's World Cup")
-                .date(LocalDate.of(2019, Month.SEPTEMBER, 30))
+                .date(LocalDate.of(2019, Month.SEPTEMBER, 30).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()
@@ -220,7 +219,7 @@ public class TournamentControllerTests {
         tournamentDtos.add(TournamentDto.builder()
                 .id(tournaments.get(1).getId().toString())
                 .tournamentName("2017 FIVB Volleyball Men's World Grand Champions Cup")
-                .date(LocalDate.of(2017, Month.OCTOBER, 11))
+                .date(LocalDate.of(2017, Month.OCTOBER, 11).atStartOfDay().toInstant(ZoneOffset.UTC))
                 .town("Japan")
                 .participants(List.of(
                         ParticipantDto.builder()
