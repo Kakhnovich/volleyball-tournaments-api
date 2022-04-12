@@ -6,14 +6,11 @@ import by.elmax19.app.service.component.WebClientUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Flux;
 
-import java.net.URI;
 import java.util.List;
 import java.util.function.Function;
 
