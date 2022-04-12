@@ -19,6 +19,7 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +51,11 @@ public class WebClientUtilsTests {
 
         assertEquals(1, actualList.size());
         assertEquals(expectedPlayer, actualList.get(0));
+
+        verify(webClientMock).get();
+        verify(requestHeadersUriMock).uri(any(Function.class));
+        verify(requestHeadersMock).retrieve();
+        verify(responseMock).bodyToFlux(PlayerDto.class);
     }
 
     private PlayerDto createPlayerDto() {
