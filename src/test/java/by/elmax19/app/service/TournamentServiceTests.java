@@ -1,8 +1,6 @@
 package by.elmax19.app.service;
 
 import by.elmax19.app.exception.TournamentNotFoundException;
-import by.elmax19.app.mapper.ParticipantMapper;
-import by.elmax19.app.mapper.TournamentMapper;
 import by.elmax19.app.model.Participant;
 import by.elmax19.app.model.Tournament;
 import by.elmax19.app.model.dto.ParticipantDto;
@@ -35,10 +33,6 @@ public class TournamentServiceTests {
     @Mock
     private PlayerService playerService;
     @Mock
-    private ParticipantMapper participantMapper;
-    @Mock
-    private TournamentMapper tournamentMapper;
-    @Mock
     private TournamentRepository tournamentRepository;
     @InjectMocks
     private TournamentServiceImpl tournamentService;
@@ -52,11 +46,6 @@ public class TournamentServiceTests {
         when(tournamentRepository.findById(tournament.getId())).thenReturn(Optional.of(tournament));
         when(playerService.findPlayersByClub(tournament.getParticipants().get(0).getClubName()))
                 .thenReturn(tournamentDto.getParticipants().get(0).getPlayers());
-        when(participantMapper.participantToDto(
-                tournament.getParticipants().get(0),
-                tournamentDto.getParticipants().get(0).getPlayers()))
-                    .thenReturn(tournamentDto.getParticipants().get(0));
-        when(tournamentMapper.convertToDto(tournament, tournamentDto.getParticipants())).thenReturn(tournamentDto);
 
         TournamentDto actual = tournamentService.findById(tournament.getId().toString());
 
@@ -86,24 +75,6 @@ public class TournamentServiceTests {
                 .thenReturn(tournamentDtos.get(0).getParticipants().get(1).getPlayers());
         when(playerService.findPlayersByClub(tournaments.get(1).getParticipants().get(0).getClubName()))
                 .thenReturn(tournamentDtos.get(1).getParticipants().get(0).getPlayers());
-
-        when(participantMapper.participantToDto(
-                tournaments.get(0).getParticipants().get(0),
-                tournamentDtos.get(0).getParticipants().get(0).getPlayers()))
-                    .thenReturn(tournamentDtos.get(0).getParticipants().get(0));
-        when(participantMapper.participantToDto(
-                tournaments.get(0).getParticipants().get(1),
-                tournamentDtos.get(0).getParticipants().get(1).getPlayers()))
-                    .thenReturn(tournamentDtos.get(0).getParticipants().get(1));
-        when(participantMapper.participantToDto(
-                tournaments.get(1).getParticipants().get(0),
-                tournamentDtos.get(1).getParticipants().get(0).getPlayers()))
-                    .thenReturn(tournamentDtos.get(1).getParticipants().get(0));
-
-        when(tournamentMapper.convertToDto(tournaments.get(0), tournamentDtos.get(0).getParticipants()))
-                .thenReturn(tournamentDtos.get(0));
-        when(tournamentMapper.convertToDto(tournaments.get(1), tournamentDtos.get(1).getParticipants()))
-                .thenReturn(tournamentDtos.get(1));
 
         List<TournamentDto> actual = tournamentService.findAll();
 
