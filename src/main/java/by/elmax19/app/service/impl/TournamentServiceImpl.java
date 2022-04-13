@@ -1,12 +1,9 @@
 package by.elmax19.app.service.impl;
 
 import by.elmax19.app.exception.TournamentNotFoundException;
-import by.elmax19.app.mapper.ParticipantMapper;
-import by.elmax19.app.mapper.TournamentMapper;
 import by.elmax19.app.model.Participant;
 import by.elmax19.app.model.Tournament;
 import by.elmax19.app.model.dto.ParticipantDto;
-import by.elmax19.app.model.dto.PlayerDto;
 import by.elmax19.app.model.dto.TournamentDto;
 import by.elmax19.app.repository.TournamentRepository;
 import by.elmax19.app.service.PlayerService;
@@ -22,37 +19,40 @@ import java.util.List;
 public class TournamentServiceImpl implements TournamentService {
     private final PlayerService playerService;
     private final TournamentRepository tournamentRepository;
-    private final ParticipantMapper participantMapper;
-    private final TournamentMapper tournamentMapper;
 
     @Override
     public List<TournamentDto> findAll() {
-        List<Tournament> allTournaments = tournamentRepository.findAll();
-        return convertTournamentListToDto(allTournaments);
+        return tournamentRepository.findAll().stream()
+                .map(this::mapTournament)
+                .toList();
     }
 
     @Override
     public TournamentDto findById(String id) {
         return tournamentRepository.findById(new ObjectId(id))
-                .map(this::convertTournamentToDto)
+                .map(this::mapTournament)
                 .orElseThrow(() -> new TournamentNotFoundException("There isn't tournament with id: " + id));
     }
 
-    private List<TournamentDto> convertTournamentListToDto(List<Tournament> tournaments) {
-        return tournaments.stream()
-                .map(this::convertTournamentToDto)
+    private TournamentDto mapTournament(Tournament tournament) {
+        var participants = tournament.getParticipants().stream()
+                .map(this::mapParticipant)
                 .toList();
+        return TournamentDto.builder()
+                .id(tournament.getId().toString())
+                .date(tournament.getDate())
+                .tournamentName(tournament.getTournamentName())
+                .town(tournament.getTown())
+                .participants(participants)
+                .build();
     }
 
-    private TournamentDto convertTournamentToDto(Tournament tournament) {
-        List<ParticipantDto> participantDtos = tournament.getParticipants().stream()
-                .map(this::convertParticipantToDto)
-                .toList();
-        return tournamentMapper.convertToDto(tournament, participantDtos);
-    }
-
-    private ParticipantDto convertParticipantToDto(Participant participant) {
-        List<PlayerDto> players = playerService.findPlayersByClub(participant.getClubName());
-        return participantMapper.participantToDto(participant, players);
+    private ParticipantDto mapParticipant(Participant participant) {
+        var players = playerService.findPlayersByClub(participant.getClubName());
+        return ParticipantDto.builder()
+                .place(participant.getPlace())
+                .clubName(participant.getClubName())
+                .players(players)
+                .build();
     }
 }

@@ -14,7 +14,6 @@ import java.util.function.Function;
 @Component
 public class WebClientUtils {
     public <T> List<T> getListByParameters(String baseUrl, String path, List<UriParameterDto> params, Class<T> entityClass) {
-        WebClient webClient = initWebClient(baseUrl);
         Function<UriBuilder, URI> uriFunction = uriBuilder -> {
             UriBuilder uri = uriBuilder
                     .path(path);
@@ -22,7 +21,7 @@ public class WebClientUtils {
             return uri.build();
         };
 
-        return webClient.get()
+        return initWebClient(baseUrl).get()
                 .uri(uriFunction)
                 .retrieve()
                 .bodyToFlux(entityClass)
