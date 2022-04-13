@@ -1,13 +1,13 @@
-package by.elmax19.volleyballtournaments;
+package by.elmax19.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VolleyballTournamentsApplication {
+public class TournamentsSpringBootApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(VolleyballTournamentsApplication.class, args);
+        SpringApplication.run(TournamentsSpringBootApplication.class, args);
     }
 
 }
