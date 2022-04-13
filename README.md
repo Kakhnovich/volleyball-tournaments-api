@@ -13,7 +13,7 @@ the Feign, we need to add spring-cloud-starter-openfeign dependency in the pom.x
 
 # Useful links:
 
-- https://www.baeldung.com/spring-5-webclient
+- https://www.baeldung.com/intro-to-feign
 - https://www.appsdeveloperblog.com/spring-feign-client-http-request-example
 
 # Scheme of work with Players API
