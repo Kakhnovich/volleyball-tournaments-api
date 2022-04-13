@@ -1,7 +1,6 @@
 package by.elmax19.app.service.component;
 
 import by.elmax19.app.model.dto.UriParameterDto;
-import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -14,10 +13,8 @@ import java.util.function.Function;
 
 @Component
 public class WebClientUtils {
-    private WebClient webClient;
-
     public <T> List<T> getListByParameters(String baseUrl, String path, List<UriParameterDto> params, Class<T> entityClass) {
-        initWebClient(baseUrl);
+        WebClient webClient = initWebClient(baseUrl);
         Function<UriBuilder, URI> uriFunction = uriBuilder -> {
             UriBuilder uri = uriBuilder
                     .path(path);
@@ -33,8 +30,8 @@ public class WebClientUtils {
                 .block();
     }
 
-    private void initWebClient(String baseUrl) {
-        webClient = WebClient.builder()
+    private WebClient initWebClient(String baseUrl) {
+        return WebClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
