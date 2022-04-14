@@ -15,6 +15,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public List<PlayerDto> findPlayersByClub(String clubName) {
-        return playerClient.getPlayersByClub(clubName);
+        return playerClient.findPlayersByClub(clubName);
     }
 }

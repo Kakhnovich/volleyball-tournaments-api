@@ -1,13 +1,12 @@
 package by.elmax19.app.controller;
 
+import by.elmax19.app.client.PlayerClient;
 import by.elmax19.app.model.Participant;
 import by.elmax19.app.model.Tournament;
 import by.elmax19.app.model.dto.ParticipantDto;
 import by.elmax19.app.model.dto.PlayerDto;
 import by.elmax19.app.model.dto.TournamentDto;
-import by.elmax19.app.model.dto.UriParameterDto;
 import by.elmax19.app.repository.TournamentRepository;
-import by.elmax19.app.service.component.WebClientUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,14 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -46,37 +43,16 @@ public class TournamentControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private WebClientUtils webClientUtils;
-    @Value("${volleyball-players.api.base-url}")
-    private String baseUrl;
-    @Value("${volleyball-players.api.players.path}")
-    private String playersPath;
-    @Value("${volleyball-players.api.players.club-parameter-name}")
-    private String clubParameterName;
+    private PlayerClient playerClient;
 
     @Test
     @DisplayName("All tournaments have been founded")
     void checkFindAllTournaments() throws Exception {
         List<TournamentDto> expectedTournaments = initTournamentList();
 
-        when(webClientUtils.getListByParameters(
-                baseUrl,
-                playersPath,
-                List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
-                PlayerDto.class))
-                    .thenReturn(List.of(createNimirDto()));
-        when(webClientUtils.getListByParameters(
-                baseUrl,
-                playersPath,
-                List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
-                PlayerDto.class))
-                    .thenReturn(List.of(createMikhaylovDto()));
-        when(webClientUtils.getListByParameters(
-                baseUrl,
-                playersPath,
-                List.of(new UriParameterDto(clubParameterName, "Volley Callipo")),
-                PlayerDto.class))
-                    .thenReturn(List.of(createNishidaDto()));
+        when(playerClient.findPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
+        when(playerClient.findPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
+        when(playerClient.findPlayersByClub("Volley Callipo")).thenReturn(List.of(createNishidaDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournaments"))
                 .andExpect(status().isOk())
@@ -97,18 +73,8 @@ public class TournamentControllerTests {
     void checkFindTournamentById() throws Exception {
         TournamentDto expectedTournament = initTournamentDto();
 
-        when(webClientUtils.getListByParameters(
-                baseUrl,
-                playersPath,
-                List.of(new UriParameterDto(clubParameterName, "Azimut Modena")),
-                PlayerDto.class))
-                    .thenReturn(List.of(createNimirDto()));
-        when(webClientUtils.getListByParameters(
-                baseUrl,
-                playersPath,
-                List.of(new UriParameterDto(clubParameterName, "Zenit Kazan")),
-                PlayerDto.class))
-                    .thenReturn(List.of(createMikhaylovDto()));
+        when(playerClient.findPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
+        when(playerClient.findPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournament/{tournamentId}", expectedTournament.getId()))
                 .andExpect(status().isOk())
