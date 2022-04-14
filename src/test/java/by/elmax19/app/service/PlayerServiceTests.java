@@ -27,7 +27,7 @@ public class PlayerServiceTests {
         String clubName = "Azimut Modena";
         PlayerDto expectedPlayer = createPlayerDto();
 
-        when(playerClient.getPlayersByClub(clubName)).thenReturn(List.of(expectedPlayer));
+        when(playerClient.findPlayersByClub(clubName)).thenReturn(List.of(expectedPlayer));
 
         List<PlayerDto> actualPlayers = playerService.findPlayersByClub(clubName);
 

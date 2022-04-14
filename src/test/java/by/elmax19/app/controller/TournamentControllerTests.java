@@ -50,9 +50,9 @@ public class TournamentControllerTests {
     void checkFindAllTournaments() throws Exception {
         List<TournamentDto> expectedTournaments = initTournamentList();
 
-        when(playerClient.getPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
-        when(playerClient.getPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
-        when(playerClient.getPlayersByClub("Volley Callipo")).thenReturn(List.of(createNishidaDto()));
+        when(playerClient.findPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
+        when(playerClient.findPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
+        when(playerClient.findPlayersByClub("Volley Callipo")).thenReturn(List.of(createNishidaDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournaments"))
                 .andExpect(status().isOk())
@@ -73,8 +73,8 @@ public class TournamentControllerTests {
     void checkFindTournamentById() throws Exception {
         TournamentDto expectedTournament = initTournamentDto();
 
-        when(playerClient.getPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
-        when(playerClient.getPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
+        when(playerClient.findPlayersByClub("Azimut Modena")).thenReturn(List.of(createNimirDto()));
+        when(playerClient.findPlayersByClub("Zenit Kazan")).thenReturn(List.of(createMikhaylovDto()));
 
         MvcResult mvcResult = mockMvc.perform(get("/tournament/{tournamentId}", expectedTournament.getId()))
                 .andExpect(status().isOk())
